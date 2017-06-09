@@ -1,0 +1,40 @@
+{
+    "manifest_version": 2,
+    "name": "Prospecting IQ",
+    "description": "This extension allows users to check the information about their linkedin connections",
+    "version": "1.0",
+    "background": {
+        "persistent": false,
+        "scripts": ["js/background.js"]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.linkedin.com/*"
+            ],
+            "js": ["js/jquery-3.1.0.min.js", "js/content.js", "js/app.js"],
+            "css": ["css/style.css", "css/font-awesome.min.css", "css/bootstrap.min.css"]
+        }
+    ],
+    "page_action": {
+        "default_icon": {"16":"img/iq16.png", "32":"img/iq32.png", "128":"img/iq128.png"},
+        "default_popup": "",
+        "default_title": "Prospecting IQ"
+    },
+    "permissions": [
+        "activeTab",
+        "storage",
+        "cookies",
+        "tabs",
+        "webNavigation",
+        "*://*/*"
+    ],
+    "web_accessible_resources": [
+        "js/*",
+        "img/*",
+        "css/*",
+        "html/*",
+        "https://*.linkedin.com/*",
+        "https://api.knowthycustomer.com/*"
+    ]
+}

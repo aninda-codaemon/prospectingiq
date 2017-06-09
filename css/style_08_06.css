@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
+body{
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+}
+
+.margin-0{
+    margin: 0;
+}
+
+.popup{
+    width: 300px;
+    height: 1000px;
+    background: linear-gradient(top, #172352, #6c6f99);
+    background: -moz-linear-gradient(top, #172352, #6c6f99);
+    background: -webkit-linear-gradient(top, #172352, #6c6f99);
+    background: -o-linear-gradient(top, #172352, #6c6f99);
+    position:fixed;
+    top:0;
+    right:0;
+    z-index: 999;
+    display: none;
+}
+
+.profile{
+    text-align: center;
+    color: #FFF;
+}
+
+.profile img{
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    margin-top: 20px;
+}
+
+.profile-heading{
+    font-size: 16px;
+    margin: 10px 0 0px 0 !important;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #FFF;
+}
+.profile-sub-heading{
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin: 0;
+    color: #FFF;
+}
+.profile-details{
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    color: #cfd1e8;
+}
+
+.profile-details span{
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    color: #cfd1e8;
+}
+
+.login-box{
+    border-radius: 6px;
+    background: #FFF;
+    margin: 30px 15px 10px 15px;
+    padding: 15px;
+    height: auto;
+    text-align: center;
+}
+.login-box img{
+    height: 50px;
+    width: 50px;
+}
+.login-text{
+    font-size: 14px;
+    font-weight: 700;
+    color: #172352;
+    margin: 0;
+}
+.login-small-text{
+    font-size: 11px!important;
+    margin-top: 5px!important;
+}
+
+.custom-form{
+    border-bottom: #6c6f99 solid 1px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.custom-btn{
+    width: 100%;
+    color: #FFF;
+    background: #172352;
+    border-radius: 6px;
+    padding: 10px 10px;
+    border: none;
+    margin-top: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.cancel-icon{
+    float:left; 
+    cursor:pointer;
+    color: #FFF;
+}
+.close-button{
+    background: #8e91bc;
+    padding: 8px;
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    width: 36px;
+}
+.min-button{
+    background: #8e91bc;
+    padding: 8px;
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    width: 36px;
+}
+.creat-account{
+    width: 100%;
+    text-align: center;
+    margin-top: 0;
+}
+.creat-account a{
+    color: #FFF;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.heading{
+    font-size: 40px;
+    color: #b0c5e0;
+}
+
+.collapse-icon{
+    width: 100px;
+    height: 50px;
+    /*background: linear-gradient(top, #172352, #6c6f99);
+    background: -moz-linear-gradient(top, #172352, #6c6f99);
+    background: -webkit-linear-gradient(top, #172352, #6c6f99);
+    background: -o-linear-gradient(top, #172352, #6c6f99);*/
+    position:fixed;
+    top:0;
+    right:0;
+    z-index: 1000;
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+    box-shadow: 1px 1px 2px #ccc;
+    display: none;
+}
+
+.arrow-left{
+    width: 50px;
+    height: 50px;
+    background: #c30768;
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+}
+
+.custom-arrow{
+    color: #FFF;
+    margin: 10px 0 0 14px;
+}
+
+.logo{
+    float: right;
+}
+
+.logo-margin{
+    margin: 10px 7px 0 0;
+}
+
+.custom-arrow{
+    margin: 10px 0 0 10px !important;
+}
