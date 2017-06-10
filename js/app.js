@@ -297,6 +297,15 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 								chrome.storage.local.remove("ktcapiak", function() {})
 								checkLogout();
 								$('#apiak_msg').text(jqXHR.responseJSON.message);
+							} else if (jqXHR.status == 429) {
+								console.log('Credit limit exceeded');
+
+								//display the credit limit exceeded message
+								$.get(chrome.extension.getURL('/html/credit_limit.html'), function(data) {
+									$('#initial-state').html('');
+									$('#social-data').html('');
+									$('#credit-limit').html(data).fadeIn();
+								});
 							}
 						}
 					}).done(function(response, textStatus, jqXHR){
@@ -351,7 +360,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 });
 
 var checkString = function(data) {
-    return /^[a-z0-9]+$/i.test(data)
+    return /^[a-z0-9_-]+$/i.test(data)
 };
 
 var removeTrailSlash = function (site) {     
