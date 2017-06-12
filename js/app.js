@@ -275,9 +275,13 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    		console.log(lnkdinurl);
 		    		//return 1;
 
+		    		//KTC API URL
+		    		var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
+		    		ktc_url = chrome.runtime.getURL('sample.json');
+
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
-						url: 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl,
+						url: ktc_url,
 						data: {},
 						type: 'GET',
 						dataType: 'json',
@@ -319,9 +323,10 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 				        console.debug('Login ajax done response', response);
 
 				        $.get(chrome.extension.getURL('/html/social_data.html'), function(data) {
-				        	console.log('Enrichment API response', jqXHR.responseText);
-				        	var rem_crd = parseInt(jqXHR.getResponseHeader('x-ratelimit-remaining-year'));
-				        	var tot_crd = parseInt(jqXHR.getResponseHeader('x-ratelimit-limit-year'));
+				        	console.log('Enrichment API response', jqXHR.responseJSON);
+				        	var json_resp = jqXHR.responseJSON;
+				        	var rem_crd = (jqXHR.getResponseHeader('x-ratelimit-remaining-year') != null)?parseInt(jqXHR.getResponseHeader('x-ratelimit-remaining-year')):0;
+				        	var tot_crd = (jqXHR.getResponseHeader('x-ratelimit-limit-year') != null)?parseInt(jqXHR.getResponseHeader('x-ratelimit-limit-year')):0;
 
 				        	var stdata = {apiak: items.ktcapiak.apiak, user_info: {r_crd: rem_crd, t_crd: tot_crd}};
 				        	ktcinfo = stdata;
@@ -330,10 +335,71 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							});
 
 							if ($('.popup').length > 0){
-								$('#initial-state').html('');
-								$('#login-box').html('');
-								$('#social-data').html(data);						    	
-						    	console.log('Social data displayed');
+								//get social icons
+								var mail_icn = chrome.extension.getURL('img/icons/mail_icon.png');
+								var mob_icn = chrome.extension.getURL('img/icons/mobile_icon.png');
+								var shar_icn = chrome.extension.getURL('img/icons/share_icon.png');
+								var fb_icn = chrome.extension.getURL('img/icons/fb_icon.png');
+								var tw_icn = chrome.extension.getURL('img/icons/twitter_icon.png');
+								var lnk_icn = chrome.extension.getURL('img/icons/linkedin_icon.png');
+								var pnt_icn = chrome.extension.getURL('img/icons/pinterest.png');
+								var gp_icn = chrome.extension.getURL('img/icons/google_plus_icon.png');
+								var fs_icn = chrome.extension.getURL('img/icons/foursquare_icon.png');
+								var am_icn = chrome.extension.getURL('img/icons/amazon_icon.png');
+								var fl_icn = chrome.extension.getURL('img/icons/flickr_icon.png');
+
+								if (json_resp.entities.people.length > 0){
+									$('#initial-state').html('');
+									$('#login-box').html('');
+									$('#social-data').html(data);						    	
+							    	console.log('Social data displayed');
+
+							    	$('img.mail-icn').attr('src', mail_icn);
+							    	$('img.mob-icn').attr('src', mob_icn);
+							    	$('img.sha-icn').attr('src', shar_icn);
+							    	$('img.fb-icn').attr('src', fb_icn);
+							    	$('img.tw-icn').attr('src', tw_icn);
+							    	$('img.lnk-icn').attr('src', lnk_icn);
+							    	$('img.pnt-icn').attr('src', pnt_icn);
+							    	$('img.gp-icn').attr('src', gp_icn);
+							    	$('img.fs-icn').attr('src', fs_icn);
+							    	$('img.am-icn').attr('src', am_icn);
+							    	$('img.fl-icn').attr('src', fl_icn);
+
+							    	//getting the email ids
+							    	console.log('Email ids', json_resp.entities.people[0].contact.emails);
+							    	var soc_email = json_resp.entities.people[0].contact.emails;
+
+							    	if (soc_email.length > 1){
+							    		$('#soc_eml_more').text('+' + (soc_email.length - 1) + ' more found');
+							    	}
+
+							    	$('#soc_eml_hl_all').html('');
+							    	soc_email.forEach(function(emails){
+							    		var allle = '';
+							    		$('p.soc-eml-pri > a').text(emails.address);
+							    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + emails.address + '</a></p>';
+							    		$('#soc_eml_hl_all').append(allle);
+							    	});
+
+							    	console.log('Phone Nos.', json_resp.entities.people[0].contact.phones);
+							    	var soc_phones = json_resp.entities.people[0].contact.phones;
+
+							    	if (soc_phones.length > 1){
+							    		$('#soc_pho_more').text('+' + (soc_phones.length - 1) + ' more found');
+							    	}
+
+							    	$('#soc_pho_hl_all').html('');
+							    	soc_phones.forEach(function(phones){
+							    		var allle = '';
+							    		$('p.soc-pho-pri > a').text(usphone(phones.number));
+							    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + usphone(phones.number) + '</a></p>';
+							    		$('#soc_pho_hl_all').append(allle);
+							    	});
+
+						    	}else{
+						    		console.log('Report for linkedin url not generated....');
+						    	}
 
 						    	if ($('.credit-button').length > 0){
 						    		$('#usr_crd_sh_st').text(rem_crd);
@@ -363,10 +429,45 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 	});
 });
 
+$(document).on('click', '#soc_eml_more', function(event){
+	event.preventDefault();
+
+	$('.soc-eml-pri').hide();
+	$('.soc-eml-more-p').hide();
+	$('#soc_eml_hl_all').fadeIn();
+});
+
+$(document).on('click', '#soc_pho_more', function(event){
+	event.preventDefault();
+
+	$('.soc-pho-pri').hide();
+	$('.soc-pho-more-p').hide();
+	$('#soc_pho_hl_all').fadeIn();
+});
+
+$(document).on('click', '.eml_pho_shwall', function(event){
+	event.preventDefault();
+	$('#soc_eml_more').trigger('click');
+	$('#soc_pho_more').trigger('click');
+});
+
 var checkString = function(data) {
     return /^[a-z0-9_-]+$/i.test(data)
 };
 
 var removeTrailSlash = function (site) {     
     return site.replace(/\/$/, "");
+}
+
+var usphone = function (phone) {
+    //normalize string and remove all unnecessary characters
+    phone = phone.replace(/[^\d]/g, "");
+
+    //check if number length equals to 10
+    if (phone.length == 10) {
+        //reformat and return phone number
+        return phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+    }
+
+    return null;
 }
