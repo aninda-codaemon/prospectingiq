@@ -255,6 +255,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 	//remove the ktc info stored in local storage
 	//chrome.storage.local.remove("ktcapiak", function() {})
 	//checkLogout();
+	//return 0;
 
 	chrome.storage.local.get("ktcapiak", function(items) {
 	    if (!chrome.runtime.error) {
@@ -305,6 +306,9 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									$('#initial-state').html('');
 									$('#social-data').html('');
 									$('#credit-limit').html(data).fadeIn();
+									$('#usr_crd_sh_st').text(0);
+						    		$('.credit-button').fadeIn();
+						    		$('.credit-button').addClass('credit-button-pink');
 								});
 							}
 						}
