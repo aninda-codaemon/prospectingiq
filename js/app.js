@@ -277,7 +277,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 
 		    		//KTC API URL
 		    		var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
-		    		ktc_url = chrome.runtime.getURL('sample.json');
+		    		//ktc_url = chrome.runtime.getURL('sample.json');
 
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
@@ -339,15 +339,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 								var mail_icn = chrome.extension.getURL('img/icons/mail_icon.png');
 								var mob_icn = chrome.extension.getURL('img/icons/mobile_icon.png');
 								var shar_icn = chrome.extension.getURL('img/icons/share_icon.png');
-								var fb_icn = chrome.extension.getURL('img/icons/fb_icon.png');
-								var tw_icn = chrome.extension.getURL('img/icons/twitter_icon.png');
-								var lnk_icn = chrome.extension.getURL('img/icons/linkedin_icon.png');
-								var pnt_icn = chrome.extension.getURL('img/icons/pinterest.png');
-								var gp_icn = chrome.extension.getURL('img/icons/google_plus_icon.png');
-								var fs_icn = chrome.extension.getURL('img/icons/foursquare_icon.png');
-								var am_icn = chrome.extension.getURL('img/icons/amazon_icon.png');
-								var fl_icn = chrome.extension.getURL('img/icons/flickr_icon.png');
-
+								
 								if (json_resp.entities.people.length > 0){
 									$('#initial-state').html('');
 									$('#login-box').html('');
@@ -357,17 +349,9 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							    	$('img.mail-icn').attr('src', mail_icn);
 							    	$('img.mob-icn').attr('src', mob_icn);
 							    	$('img.sha-icn').attr('src', shar_icn);
-							    	$('img.fb-icn').attr('src', fb_icn);
-							    	$('img.tw-icn').attr('src', tw_icn);
-							    	$('img.lnk-icn').attr('src', lnk_icn);
-							    	$('img.pnt-icn').attr('src', pnt_icn);
-							    	$('img.gp-icn').attr('src', gp_icn);
-							    	$('img.fs-icn').attr('src', fs_icn);
-							    	$('img.am-icn').attr('src', am_icn);
-							    	$('img.fl-icn').attr('src', fl_icn);
-
+							    	
 							    	//getting the email ids
-							    	console.log('Email ids', json_resp.entities.people[0].contact.emails);
+							    	//console.log('Email ids', json_resp.entities.people[0].contact.emails);
 							    	var soc_email = json_resp.entities.people[0].contact.emails;
 
 							    	if (soc_email.length > 1){
@@ -382,7 +366,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							    		$('#soc_eml_hl_all').append(allle);
 							    	});
 
-							    	console.log('Phone Nos.', json_resp.entities.people[0].contact.phones);
+							    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones);
 							    	var soc_phones = json_resp.entities.people[0].contact.phones;
 
 							    	if (soc_phones.length > 1){
@@ -397,8 +381,27 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							    		$('#soc_pho_hl_all').append(allle);
 							    	});
 
+							    	//get all the social profiles
+							    	var soc_prof = json_resp.entities.people[0].social.profiles;
+							    	//console.log('Social profiles', soc_prof);
+
+							    	soc_prof.forEach(function(profiles){
+							    		//console.log('Profile', profiles);
+							    		$('#soc_url_hl').html('');
+
+							    		//generate the social block
+							    		appendSocialBlock(profiles);
+							    	});
+
 						    	}else{
 						    		console.log('Report for linkedin url not generated....');
+
+						    		$.get(chrome.extension.getURL('/html/user_info_not_found.html'), function(data) {
+						    			$('#initial-state').html('');
+										$('#login-box').html('');
+										$('#social-data').html(data);
+										$('#usr_nof_nm_hl').text($('.pv-top-card-section__name').text());
+						    		});
 						    	}
 
 						    	if ($('.credit-button').length > 0){
@@ -429,6 +432,93 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 	});
 });
 
+var appendSocialBlock = function(prfdata){
+
+	var fb_icn = chrome.extension.getURL('img/icons/fb_icon.png');
+	var tw_icn = chrome.extension.getURL('img/icons/twitter_icon.png');
+	var lnk_icn = chrome.extension.getURL('img/icons/linkedin_icon.png');
+	var pnt_icn = chrome.extension.getURL('img/icons/pinterest.png');
+	var gp_icn = chrome.extension.getURL('img/icons/google_plus_icon.png');
+	var fs_icn = chrome.extension.getURL('img/icons/foursquare_icon.png');
+	var am_icn = chrome.extension.getURL('img/icons/amazon_icon.png');
+	var fl_icn = chrome.extension.getURL('img/icons/flickr_icon.png');
+
+	if (prfdata.site !== null){
+		$.get(chrome.extension.getURL('/html/social_url_blocks.html'), function(data) {		
+			
+			if (prfdata.domain === 'linkedin.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', lnk_icn);
+				
+			}else if (prfdata.domain === 'amazon.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', am_icn);
+
+			}else if (prfdata.domain === 'flickr.com'){
+				appendSocialBlockData(data, prfdata);
+		    	$('img.soc-rd-icn').last().attr('src', fl_icn);
+
+			}else if (prfdata.domain === 'plus.google.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', gp_icn);
+
+			}else if (prfdata.domain === 'cyber.law.harvard.edu'){
+				//find image for cyber.law.harvard.edu
+
+			}else if (prfdata.domain === 'whitepages.plus'){
+				//find image for cyber.law.harvard.edu
+
+			}else if (prfdata.domain === 'blog.beenverified.com'){
+				//find image for cyber.law.harvard.edu
+
+			}else if (prfdata.domain === 'beenverified.com'){
+				//find image for cyber.law.harvard.edu
+
+			}else if (prfdata.domain === 'twitter.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', tw_icn);
+
+			}else if (prfdata.domain === 'facebook.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', fb_icn);
+
+			}else if (prfdata.domain === 'pinterest.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', pnt_icn);
+				
+			}else if (prfdata.domain === 'foursquare.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', fs_icn);
+				
+			}else if (prfdata.domain === 'en.gravatar.com'){
+				//find image for en.gravatar.com
+				
+			}else if (prfdata.domain === 'en.gravatar.com'){
+				//find image for en.gravatar.com
+				
+			}else if (prfdata.domain === 'gravatar.com'){
+				//find image for gravatar.com
+				
+			}else if (prfdata.domain === 'instagram.com'){
+				//find image for instagram.com
+				
+			}else if (prfdata.domain === 'angel.co'){
+				//find image for angel.co
+				
+			}else if (prfdata.domain === 'klout.com'){
+				//find image for klout.com
+				
+			}			
+		});
+	}
+};
+
+var appendSocialBlockData = function(htmldata, prfdata){
+	$('#soc_url_hl').append(htmldata);
+	$('.soc-rd-url-btn').last().attr('data-href', prfdata.url);
+	$('.soc-url-nm').last().text(capitalizeFirstLetter(prfdata.site));
+}
+
 $(document).on('click', '#soc_eml_more', function(event){
 	event.preventDefault();
 
@@ -451,6 +541,13 @@ $(document).on('click', '.eml_pho_shwall', function(event){
 	$('#soc_pho_more').trigger('click');
 });
 
+$(document).on('click', '.soc-rd-url-btn', function(event){
+	event.preventDefault();
+	//console.log(event.target, $(event.target).attr('data-href'));
+	var url = $(event.target).attr('data-href');	
+	window.open(url, '_blank');
+});
+
 var checkString = function(data) {
     return /^[a-z0-9_-]+$/i.test(data)
 };
@@ -470,4 +567,8 @@ var usphone = function (phone) {
     }
 
     return null;
+}
+
+var capitalizeFirstLetter = function(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

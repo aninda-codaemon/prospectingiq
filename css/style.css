@@ -388,3 +388,9 @@ body{
 .color-white{
     color: #FFF;
 }
+.no-display{
+    display: none!important;
+}
+.block-display{
+    display: block;!important;
+}
