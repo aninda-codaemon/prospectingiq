@@ -258,9 +258,9 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 	console.log('Retrieve contact info btn user info', ktcinfo);
 
 	//remove the ktc info stored in local storage
-	//chrome.storage.local.remove("ktcapiak", function() {})
-	//checkLogout();
-	//return 0;
+	chrome.storage.local.remove("ktcapiak", function() {})
+	checkLogout();
+	return 0;
 
 	chrome.storage.local.get("ktcapiak", function(items) {
 	    if (!chrome.runtime.error) {
@@ -281,7 +281,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    		//return 1;
 
 		    		//KTC API URL
-		    		//var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
+		    		var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
 		    		ktc_url = chrome.runtime.getURL('sample.json');
 
 		    		//call ajax with the url to fetch the user report
@@ -359,32 +359,42 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							    	//console.log('Email ids', json_resp.entities.people[0].contact.emails);
 							    	var soc_email = json_resp.entities.people[0].contact.emails;
 
-							    	if (soc_email.length > 1){
-							    		$('#soc_eml_more').text('+' + (soc_email.length - 1) + ' more found');
-							    	}
+							    	if (soc_email.length > 0){
+								    	if (soc_email.length > 1){
+								    		$('#soc_eml_more').text('+' + (soc_email.length - 1) + ' more found');
+								    	}
 
-							    	$('#soc_eml_hl_all').html('');
-							    	soc_email.forEach(function(emails){
-							    		var allle = '';
-							    		$('p.soc-eml-pri > a').text(emails.address);
-							    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + emails.address + '</a></p>';
-							    		$('#soc_eml_hl_all').append(allle);
-							    	});
+								    	$('#soc_eml_hl_all').html('');
+								    	soc_email.forEach(function(emails){
+								    		var allle = '';
+								    		$('p.soc-eml-pri > a').text(emails.address);
+								    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + emails.address + '</a></p>';
+								    		$('#soc_eml_hl_all').append(allle);
+								    	});
+								    }else{
+								    	$('#soc_eml_more').trigger('click');
+								    }
 
-							    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones);
+
+							    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones.length);
 							    	var soc_phones = json_resp.entities.people[0].contact.phones;
 
-							    	if (soc_phones.length > 1){
-							    		$('#soc_pho_more').text('+' + (soc_phones.length - 1) + ' more found');
-							    	}
+							    	if (soc_phones.length > 0){
 
-							    	$('#soc_pho_hl_all').html('');
-							    	soc_phones.forEach(function(phones){
-							    		var allle = '';
-							    		$('p.soc-pho-pri > a').text(usphone(phones.number));
-							    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + usphone(phones.number) + '</a></p>';
-							    		$('#soc_pho_hl_all').append(allle);
-							    	});
+								    	if (soc_phones.length > 1){
+								    		$('#soc_pho_more').text('+' + (soc_phones.length - 1) + ' more found');
+								    	}
+
+								    	$('#soc_pho_hl_all').html('');
+								    	soc_phones.forEach(function(phones){
+								    		var allle = '';
+								    		$('p.soc-pho-pri > a').text(usphone(phones.number));
+								    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + usphone(phones.number) + '</a></p>';
+								    		$('#soc_pho_hl_all').append(allle);
+								    	});
+							    	}else{
+							    		$('#soc_pho_more').trigger('click');
+							    	}
 
 							    	//get all the social profiles
 							    	var soc_prof = json_resp.entities.people[0].social.profiles;
@@ -548,6 +558,7 @@ $(document).on('click', '.eml_pho_shwall', function(event){
 	event.preventDefault();
 	$('#soc_eml_more').trigger('click');
 	$('#soc_pho_more').trigger('click');
+	$('.eml_pho_shwall').hide();
 });
 
 $(document).on('click', '.soc-rd-url-btn', function(event){
