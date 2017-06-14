@@ -258,9 +258,9 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 	console.log('Retrieve contact info btn user info', ktcinfo);
 
 	//remove the ktc info stored in local storage
-	chrome.storage.local.remove("ktcapiak", function() {})
-	checkLogout();
-	return 0;
+	//chrome.storage.local.remove("ktcapiak", function() {})
+	//checkLogout();
+	//return 0;
 
 	chrome.storage.local.get("ktcapiak", function(items) {
 	    if (!chrome.runtime.error) {
@@ -282,7 +282,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 
 		    		//KTC API URL
 		    		var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
-		    		ktc_url = chrome.runtime.getURL('sample.json');
+		    		//ktc_url = chrome.runtime.getURL('sample.json');
 
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
