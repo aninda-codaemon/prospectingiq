@@ -16,8 +16,9 @@
             "css": ["css/style.css", "css/font-awesome.min.css", "css/bootstrap.min.css"]
         }
     ],
+    "icons": {"16":"img/iq16.png", "24":"img/iq24.png", "32":"img/iq32.png", "48":"img/iq48.png", "128":"img/iq128.png"},
     "page_action": {
-        "default_icon": {"16":"img/iq16.png", "32":"img/iq32.png", "128":"img/iq128.png"},
+        "default_icon": {"16":"img/iq128.png", "24":"img/iq128.png", "32":"img/iq128.png", "48":"img/iq128.png", "128":"img/iq128.png"},
         "default_popup": "",
         "default_title": "Prospecting IQ"
     },

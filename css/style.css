@@ -10,7 +10,7 @@ body{
 
 #popup{
     width: 300px;
-    /*height: 1000px;*/
+    /*height: auto;*/
     background: linear-gradient(top, #172352, #6c6f99);
     background: -moz-linear-gradient(top, #172352, #6c6f99);
     background: -webkit-linear-gradient(top, #172352, #6c6f99);
@@ -19,9 +19,9 @@ body{
     top:0;
     right:0;
     z-index: 999;
-    overflow-y: scroll;
-    top: 0;
+    overflow-y: auto;
     bottom: 0;
+    padding-bottom: 100px;
 }
 #popup::-webkit-scrollbar {
     width: 8px;
@@ -59,6 +59,7 @@ body{
 
 .profile-heading{
     font-size: 16px;
+    line-height: 16px;
     margin: 0 !important;
     font-weight: 400;
     letter-spacing: 1px;
@@ -177,8 +178,8 @@ body{
 
 .custom-btn{
     width: 100%;
-    color: #FFF;
-    background: #172352;
+    color: #FFF !important;
+    background: #172352 !important;
     border-radius: 6px;
     padding: 10px 10px;
     border: none;
@@ -188,7 +189,7 @@ body{
 }
 .custom-btn-2{
     width: 100%;
-    color: #172352;
+    color: #172352 !important;
     background: none;
     border: #172352 solid 1px !important;
     border-radius: 6px;
@@ -200,14 +201,27 @@ body{
 }
 .custom-btn-3{
     width: 100%;
-    color: #FFF;
-    background: #c30768;
+    color: #FFF !important;
+    background: #c30768 !important;
     border-radius: 6px;
     padding: 10px 10px;
     border: none;
     margin-top: 0;
     font-weight: 700;
     letter-spacing: 1px;
+}
+.show-all-btn{
+    width: 40%;
+    color: #FFF !important;
+    background: #172352 !important;
+    border-radius: 6px;
+    padding: 10px 10px;
+    border: none;
+    margin-top: 0;
+    margin-left: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    float: right;
 }
 
 .cancel-icon{
@@ -309,6 +323,11 @@ body{
 .list{
     width: 100%;
     float: left;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background-color: none !important;
+    border-radius: 0 !important;
+    border: none !important;
 }
 
 .left-content{
@@ -342,13 +361,13 @@ body{
 }
 
 .custom-btn-small{
-    background: none;
-    border-radius: 5px;
-    border: 1px solid #172352;
-    padding: 2px 16px;
-    font-size: 12px;
-    font-weight: 900;
-    color: #172352;
+    background: none !important;
+    border-radius: 5px !important;
+    border: 1px solid #172352 !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    color: #172352 !important;
     
 }
 
@@ -393,4 +412,37 @@ body{
 }
 .block-display{
     display: block;!important;
+}
+
+/***Added On 14-06-2017***/
+.fixed-footer{
+    z-index: 2000 !important;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: #FFF;
+    box-shadow: 0px -1px 2px #414141;
+    width: 300px;
+    padding: 10px 15px;
+    text-align: center;
+}
+.footer-text{
+    font-size: 24px;
+    color: #172352;
+}
+.footer-text-small{
+    color: #172352;
+    font-size: 10px;
+    font-weight: 900;
+}
+.ktc_logo{
+    width: 100px !important;
+    vertical-align: middle;
+}
+.align-middle{
+    vertical-align: middle;
+}
+.share-icon{
+    vertical-align: middle;
+    padding-left: 5px;
 }

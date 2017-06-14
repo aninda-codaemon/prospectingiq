@@ -23,6 +23,8 @@ var initpop = function(){
 		var cls_btn_icon = chrome.extension.getURL('/img/close_icon.png');		
 		var clps_img_arrw = chrome.extension.getURL('/img/back_icon_32.png');
 		var clps_img_ic = chrome.extension.getURL('/img/iq32.png');
+		var fx_ft_logo = chrome.extension.getURL('/img/iq32.png');
+		var fx_ft_pw_logo = chrome.extension.getURL('/img/ktc_logo.png');
 
 		//check if popup is already
 		//in the page or not
@@ -34,6 +36,9 @@ var initpop = function(){
 	    $('.close-button img').attr('src', cls_btn_icon);	    
 	    $('img.clps_img_arrw').attr('src', clps_img_arrw);
 	    $('img.clps_img_ic').attr('src', clps_img_ic);
+
+	    $('img.fx-ft-logo').attr('src', fx_ft_logo);
+	    $('img.fx-ft-pw-logo').attr('src', fx_ft_pw_logo);
 
 	    $('img.topsection__image').attr('src', $('img.pv-top-card-section__image').attr('src'));
 	    $('.topsection__name').html($('.pv-top-card-section__name').text());
@@ -276,8 +281,8 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    		//return 1;
 
 		    		//KTC API URL
-		    		var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
-		    		//ktc_url = chrome.runtime.getURL('sample.json');
+		    		//var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
+		    		ktc_url = chrome.runtime.getURL('sample.json');
 
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
@@ -442,6 +447,7 @@ var appendSocialBlock = function(prfdata){
 	var fs_icn = chrome.extension.getURL('img/icons/foursquare_icon.png');
 	var am_icn = chrome.extension.getURL('img/icons/amazon_icon.png');
 	var fl_icn = chrome.extension.getURL('img/icons/flickr_icon.png');
+	var in_icn = chrome.extension.getURL('img/icons/instagram_icon.png');
 
 	if (prfdata.site !== null){
 		$.get(chrome.extension.getURL('/html/social_url_blocks.html'), function(data) {		
@@ -490,6 +496,10 @@ var appendSocialBlock = function(prfdata){
 				appendSocialBlockData(data, prfdata);
 				$('img.soc-rd-icn').last().attr('src', fs_icn);
 				
+			}else if (prfdata.domain === 'instagram.com'){
+				appendSocialBlockData(data, prfdata);
+				$('img.soc-rd-icn').last().attr('src', in_icn);
+				
 			}else if (prfdata.domain === 'en.gravatar.com'){
 				//find image for en.gravatar.com
 				
@@ -498,9 +508,6 @@ var appendSocialBlock = function(prfdata){
 				
 			}else if (prfdata.domain === 'gravatar.com'){
 				//find image for gravatar.com
-				
-			}else if (prfdata.domain === 'instagram.com'){
-				//find image for instagram.com
 				
 			}else if (prfdata.domain === 'angel.co'){
 				//find image for angel.co
@@ -515,6 +522,8 @@ var appendSocialBlock = function(prfdata){
 
 var appendSocialBlockData = function(htmldata, prfdata){
 	$('#soc_url_hl').append(htmldata);
+	var sh_icn = chrome.extension.getURL('img/share-icon.png');
+	$('img.soc-sh-icn').last().attr('src', sh_icn);
 	$('.soc-rd-url-btn').last().attr('data-href', prfdata.url);
 	$('.soc-url-nm').last().text(capitalizeFirstLetter(prfdata.site));
 }
@@ -543,9 +552,18 @@ $(document).on('click', '.eml_pho_shwall', function(event){
 
 $(document).on('click', '.soc-rd-url-btn', function(event){
 	event.preventDefault();
-	//console.log(event.target, $(event.target).attr('data-href'));
-	var url = $(event.target).attr('data-href');	
-	window.open(url, '_blank');
+	console.log(event.target, $(event.target).parent());
+	var url;
+
+	if ($(event.target).is(':button')){
+		url = $(event.target).attr('data-href');	
+		window.open(url, '_blank');
+		console.log('Redirect url: ', url);
+	}else{
+		url = $(event.target).parent().attr('data-href');	
+		window.open(url, '_blank');
+		console.log('Redirect url: ', url);
+	}
 });
 
 var checkString = function(data) {
