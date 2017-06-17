@@ -25,14 +25,17 @@ var initpop = function(){
 		var clps_img_ic = chrome.extension.getURL('/img/iq32.png');
 		var fx_ft_logo = chrome.extension.getURL('/img/iq32.png');
 		var fx_ft_pw_logo = chrome.extension.getURL('/img/ktc_logo.png');
+		var ld_gif = chrome.extension.getURL('/img/ajax-loader.gif');
 
 		//check if popup is already
 		//in the page or not
 		if ($('.popup').length <= 0){
 	    	$('#prosiq_pop_holder').html(data);
+	    	$('div.loader-bg').children('img').attr('src', ld_gif);
 	    	$('.popup').fadeIn();
 		}
 
+		loaderShow();
 	    $('.close-button img').attr('src', cls_btn_icon);	    
 	    $('img.clps_img_arrw').attr('src', clps_img_arrw);
 	    $('img.clps_img_ic').attr('src', clps_img_ic);
@@ -47,12 +50,23 @@ var initpop = function(){
     	$('.topsection__company').html($('h3.pv-top-card-section__company').text());
     	if ($('h3.pv-top-card-section__school').text().length > 0){$('.topsection__school').html(" | " + $('h3.pv-top-card-section__school').text());}
     	$('.topsection__location').html($('h3.pv-top-card-section__location').text());
-    	
+    	loaderHide();
+
     	checkLogin();
 	});
 }
 
+var loaderShow = function(){
+	$('div.loader-bg').show();
+}
+
+var loaderHide = function(){
+	$('div.loader-bg').hide();
+}
+
 var checkLogin = function(){
+
+	loaderShow();
 
 	chrome.storage.local.get("ktcapiak", function(items) {
 	    if (!chrome.runtime.error) {
@@ -68,7 +82,8 @@ var checkLogin = function(){
 		    			$('#credit-limit').html('');
 				    	$('#login-box').html(data);	
 				    	var logo_icon = chrome.extension.getURL('/img/logo.png');
-				    	$('img.login-box-logo').attr('src', logo_icon);			    	
+				    	$('img.login-box-logo').attr('src', logo_icon);
+				    	loaderHide();			    	
 					}
 		    	});
 		    }else{
@@ -86,16 +101,19 @@ var checkLogin = function(){
 						$('#initial-state').html(data);						
 						$('#rt_inf_nm').html($('.pv-top-card-section__name').text());				    	
 				    	$('#ret_cnt_inf_btn').attr('data-href', window.location.href);
+				    	loaderHide();
 					}
 		    	});
 		    }
 	    }else{
+	    	loaderHide();
 	    	console.log('Login storage error', chrome.runtime.error);
 	    }
   	});
 }
 
 var checkLogout = function(){
+	loaderShow();
 	$.get(chrome.extension.getURL('/html/login.html'), function(data) {
 		if ($('.popup').length > 0){
 			$('#initial-state').html('');
@@ -104,7 +122,8 @@ var checkLogout = function(){
 	    	$('#login-box').html(data);
 	    	var logo_icon = chrome.extension.getURL('/img/logo.png');
 	    	$('img.login-box-logo').attr('src', logo_icon);
-	    	console.log('Logged out');	    	
+	    	console.log('Logged out');
+	    	loaderHide();   	
 		}
 	});
 }
@@ -266,6 +285,8 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 	//return 0;
 
 	chrome.storage.local.get("ktcapiak", function(items) {
+		loaderShow();
+
 	    if (!chrome.runtime.error) {
 	      	console.log('Check login storage data');
 
@@ -323,6 +344,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									$('#usr_crd_sh_st').text(0);
 						    		$('.credit-button').fadeIn();
 						    		$('.credit-button').addClass('credit-button-pink');
+						    		loaderHide();
 								});
 							}
 						}
@@ -350,6 +372,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 								$('#usr_crd_sh_st').text(0);
 					    		$('.credit-button').fadeIn();
 					    		$('.credit-button').addClass('credit-button-pink');
+					    		loaderHide();
 							});
 						}else if (parseInt(json_resp.header['Status']) == 200) {
 
@@ -397,10 +420,13 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + emails.address + '</a></p>';
 									    		$('#soc_eml_hl_all').append(allle);
 									    	});
+
+									    	if (soc_email.length == 1){
+									    		$('#soc_eml_more').trigger('click');	
+									    	}
 									    }else{
 									    	$('#soc_eml_more').trigger('click');
 									    }
-
 
 								    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones.length);
 								    	var soc_phones = json_resp.body.entities.people[0].contact.phones;
@@ -418,6 +444,10 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + usphone(phones.number) + '</a></p>';
 									    		$('#soc_pho_hl_all').append(allle);
 									    	});
+
+									    	if (soc_phones.length == 1){
+									    		$('#soc_pho_more').trigger('click');	
+									    	}
 								    	}else{
 								    		$('#soc_pho_more').trigger('click');
 								    	}
@@ -442,6 +472,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 											$('#login-box').html('');
 											$('#social-data').html(data);
 											$('#usr_nof_nm_hl').text($('.pv-top-card-section__name').text());
+											
 							    		});
 							    	}
 
@@ -449,6 +480,8 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							    		$('#usr_crd_sh_st').text(rem_crd);
 							    		$('.credit-button').fadeIn();
 							    	}
+
+							    	loaderHide();
 								}
 							});
 
@@ -470,6 +503,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    	}
 		    }
 		}else{
+			loaderHide();
 			console.log('Chrome internal error report generate API', chrome.runtime.error);
 		}
 	});
