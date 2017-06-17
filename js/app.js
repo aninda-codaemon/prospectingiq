@@ -65,6 +65,7 @@ var checkLogin = function(){
 		    		if ($('.popup').length > 0){
 		    			$('#initial-state').html('');
 		    			$('#social-data').html('');
+		    			$('#credit-limit').html('');
 				    	$('#login-box').html(data);	
 				    	var logo_icon = chrome.extension.getURL('/img/logo.png');
 				    	$('img.login-box-logo').attr('src', logo_icon);			    	
@@ -81,6 +82,7 @@ var checkLogin = function(){
 		    			console.log('Current url', window.location.href);
 				    	$('#login-box').html('');
 				    	$('#social-data').html('');
+				    	$('#credit-limit').html('');
 						$('#initial-state').html(data);						
 						$('#rt_inf_nm').html($('.pv-top-card-section__name').text());				    	
 				    	$('#ret_cnt_inf_btn').attr('data-href', window.location.href);
@@ -98,6 +100,7 @@ var checkLogout = function(){
 		if ($('.popup').length > 0){
 			$('#initial-state').html('');
 			$('#social-data').html('');
+			$('#credit-limit').html('');
 	    	$('#login-box').html(data);
 	    	var logo_icon = chrome.extension.getURL('/img/logo.png');
 	    	$('img.login-box-logo').attr('src', logo_icon);
@@ -277,12 +280,14 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    		var apiak = items.ktcapiak.apiak;
 		    		var lnkdinurl = encodeURI(removeTrailSlash($('#ret_cnt_inf_btn').attr('data-href')));
 		    		//apiak = '240a660ce9024b05b222b8ffb8b709ea';
+		    		//apiak = 'expired_api_key';
 		    		console.log(lnkdinurl);
 		    		//return 1;
 
 		    		//KTC API URL
-		    		var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
-		    		//ktc_url = chrome.runtime.getURL('sample.json');
+		    		//var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
+		    		//var ktc_url = chrome.runtime.getURL('sample.json');
+		    		var ktc_url = 'https://shopify.shoptradeonline.com/shoptradeapp/chrome/call_api?apikey='+apiak+'&lnkurl='+lnkdinurl;
 
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
@@ -322,122 +327,145 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							}
 						}
 					}).done(function(response, textStatus, jqXHR){
-						console.log('Login ajax xhr all remain', jqXHR.getResponseHeader('x-ratelimit-remaining-year'));
-						console.debug('Login ajax done xhr limit', jqXHR.getResponseHeader('x-ratelimit-limit-year')); 
-				        console.debug('Login ajax done textStatus', textStatus);
-				        console.debug('Login ajax done response', response);
+						// console.log('Login ajax xhr all remain', jqXHR.getResponseHeader('x-ratelimit-remaining-year'));
+						// console.debug('Login ajax done xhr limit', jqXHR.getResponseHeader('x-ratelimit-limit-year')); 
+				  		// console.debug('Login ajax done textStatus', textStatus);
+				        //console.debug('Login ajax done response', response);
+				        console.log('Enrichment API response', jqXHR.responseJSON);
+				        var json_resp = jqXHR.responseJSON.result;
 
-				        $.get(chrome.extension.getURL('/html/social_data.html'), function(data) {
-				        	console.log('Enrichment API response', jqXHR.responseJSON);
-				        	var json_resp = jqXHR.responseJSON;
-				        	var rem_crd = (jqXHR.getResponseHeader('x-ratelimit-remaining-year') != null)?parseInt(jqXHR.getResponseHeader('x-ratelimit-remaining-year')):0;
-				        	var tot_crd = (jqXHR.getResponseHeader('x-ratelimit-limit-year') != null)?parseInt(jqXHR.getResponseHeader('x-ratelimit-limit-year')):0;
+				        if (parseInt(json_resp.header['Status']) == 403){
+							console.log('Invalid API Key, Back To Login Form');
+							chrome.storage.local.remove("ktcapiak", function() {})
+							checkLogout();
+							$('#apiak_msg').text(jqXHR.responseJSON.message);
+						} else if (parseInt(json_resp.header['Status']) == 429) {
+							console.log('Credit limit exceeded');
 
-				        	var stdata = {apiak: items.ktcapiak.apiak, user_info: {r_crd: rem_crd, t_crd: tot_crd}};
-				        	ktcinfo = stdata;
-							chrome.storage.local.set({ktcapiak: stdata}, function() {
-								console.log('Data updated in local');
+							//display the credit limit exceeded message
+							$.get(chrome.extension.getURL('/html/credit_limit.html'), function(data) {
+								$('#initial-state').html('');
+								$('#social-data').html('');
+								$('#credit-limit').html(data).fadeIn();
+								$('#usr_crd_sh_st').text(0);
+					    		$('.credit-button').fadeIn();
+					    		$('.credit-button').addClass('credit-button-pink');
 							});
+						}else if (parseInt(json_resp.header['Status']) == 200) {
 
-							if ($('.popup').length > 0){
-								//get social icons
-								var mail_icn = chrome.extension.getURL('img/icons/mail_icon.png');
-								var mob_icn = chrome.extension.getURL('img/icons/mobile_icon.png');
-								var shar_icn = chrome.extension.getURL('img/icons/share_icon.png');
-								
-								if (json_resp.entities.people.length > 0){
-									$('#initial-state').html('');
-									$('#login-box').html('');
-									$('#social-data').html(data);						    	
-							    	console.log('Social data displayed');
+							//display the social data
+							$.get(chrome.extension.getURL('/html/social_data.html'), function(data) {
+				        		
+					        	var rem_crd = (json_resp.header['X-RateLimit-Remaining-year'] != undefined)?parseInt(json_resp.header['X-RateLimit-Remaining-year']):0;
+					        	var tot_crd = (json_resp.header['X-RateLimit-Limit-year'] != undefined)?parseInt(json_resp.header['X-RateLimit-Limit-year']):0;
 
-							    	$('img.mail-icn').attr('src', mail_icn);
-							    	$('img.mob-icn').attr('src', mob_icn);
-							    	$('img.sha-icn').attr('src', shar_icn);
-							    	
-							    	//getting the email ids
-							    	//console.log('Email ids', json_resp.entities.people[0].contact.emails);
-							    	var soc_email = json_resp.entities.people[0].contact.emails;
+					        	var stdata = {apiak: items.ktcapiak.apiak, user_info: {r_crd: rem_crd, t_crd: tot_crd}};
+					        	ktcinfo = stdata;
+								chrome.storage.local.set({ktcapiak: stdata}, function() {
+									console.log('Data updated in local');
+								});
 
-							    	if (soc_email.length > 0){
-								    	if (soc_email.length > 1){
-								    		$('#soc_eml_more').text('+' + (soc_email.length - 1) + ' more found');
+								if ($('.popup').length > 0){
+									//get social icons
+									var mail_icn = chrome.extension.getURL('img/icons/mail_icon.png');
+									var mob_icn = chrome.extension.getURL('img/icons/mobile_icon.png');
+									var shar_icn = chrome.extension.getURL('img/icons/share_icon.png');
+									
+									if (json_resp.body.entities.people.length > 0){
+										$('#initial-state').html('');
+										$('#login-box').html('');
+										$('#social-data').html(data);						    	
+								    	console.log('Social data displayed');
+
+								    	$('img.mail-icn').attr('src', mail_icn);
+								    	$('img.mob-icn').attr('src', mob_icn);
+								    	$('img.sha-icn').attr('src', shar_icn);
+								    	
+								    	//getting the email ids
+								    	//console.log('Email ids', json_resp.entities.people[0].contact.emails);
+								    	var soc_email = json_resp.body.entities.people[0].contact.emails;
+
+								    	if (soc_email.length > 0){
+									    	if (soc_email.length > 1){
+									    		$('#soc_eml_more').text('+' + (soc_email.length - 1) + ' more found');
+									    	}
+
+									    	$('#soc_eml_hl_all').html('');
+									    	soc_email.forEach(function(emails){
+									    		var allle = '';
+									    		$('p.soc-eml-pri > a').text(emails.address);
+									    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + emails.address + '</a></p>';
+									    		$('#soc_eml_hl_all').append(allle);
+									    	});
+									    }else{
+									    	$('#soc_eml_more').trigger('click');
+									    }
+
+
+								    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones.length);
+								    	var soc_phones = json_resp.body.entities.people[0].contact.phones;
+
+								    	if (soc_phones.length > 0){
+
+									    	if (soc_phones.length > 1){
+									    		$('#soc_pho_more').text('+' + (soc_phones.length - 1) + ' more found');
+									    	}
+
+									    	$('#soc_pho_hl_all').html('');
+									    	soc_phones.forEach(function(phones){
+									    		var allle = '';
+									    		$('p.soc-pho-pri > a').text(usphone(phones.number));
+									    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + usphone(phones.number) + '</a></p>';
+									    		$('#soc_pho_hl_all').append(allle);
+									    	});
+								    	}else{
+								    		$('#soc_pho_more').trigger('click');
 								    	}
 
-								    	$('#soc_eml_hl_all').html('');
-								    	soc_email.forEach(function(emails){
-								    		var allle = '';
-								    		$('p.soc-eml-pri > a').text(emails.address);
-								    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + emails.address + '</a></p>';
-								    		$('#soc_eml_hl_all').append(allle);
+								    	//get all the social profiles
+								    	var soc_prof = json_resp.body.entities.people[0].social.profiles;
+								    	//console.log('Social profiles', soc_prof);
+
+								    	soc_prof.forEach(function(profiles){
+								    		//console.log('Profile', profiles);
+								    		$('#soc_url_hl').html('');
+
+								    		//generate the social block
+								    		appendSocialBlock(profiles);
 								    	});
-								    }else{
-								    	$('#soc_eml_more').trigger('click');
-								    }
 
-
-							    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones.length);
-							    	var soc_phones = json_resp.entities.people[0].contact.phones;
-
-							    	if (soc_phones.length > 0){
-
-								    	if (soc_phones.length > 1){
-								    		$('#soc_pho_more').text('+' + (soc_phones.length - 1) + ' more found');
-								    	}
-
-								    	$('#soc_pho_hl_all').html('');
-								    	soc_phones.forEach(function(phones){
-								    		var allle = '';
-								    		$('p.soc-pho-pri > a').text(usphone(phones.number));
-								    		allle = '<p class="margin-0"><a href="javascript: void(0);" class="login-text">' + usphone(phones.number) + '</a></p>';
-								    		$('#soc_pho_hl_all').append(allle);
-								    	});
 							    	}else{
-							    		$('#soc_pho_more').trigger('click');
+							    		console.log('Report for linkedin url not generated....');
+
+							    		$.get(chrome.extension.getURL('/html/user_info_not_found.html'), function(data) {
+							    			$('#initial-state').html('');
+											$('#login-box').html('');
+											$('#social-data').html(data);
+											$('#usr_nof_nm_hl').text($('.pv-top-card-section__name').text());
+							    		});
 							    	}
 
-							    	//get all the social profiles
-							    	var soc_prof = json_resp.entities.people[0].social.profiles;
-							    	//console.log('Social profiles', soc_prof);
+							    	if ($('.credit-button').length > 0){
+							    		$('#usr_crd_sh_st').text(rem_crd);
+							    		$('.credit-button').fadeIn();
+							    	}
+								}
+							});
 
-							    	soc_prof.forEach(function(profiles){
-							    		//console.log('Profile', profiles);
-							    		$('#soc_url_hl').html('');
+					        //save the data in chrome local storage
+							// var stdata = {apiak: $.trim(apiak.val()), user_info: {user_credits: 13}};
+							// chrome.storage.local.set({ktcapiak: stdata}, function() {
+							// 	checkLogin();
 
-							    		//generate the social block
-							    		appendSocialBlock(profiles);
-							    	});
+							// 	//send message to all tabs to update
+							// 	//popup in all tabs
+							// 	// chrome.runtime.sendMessage({
+							// 	//     from:    'app',
+							// 	//     subject: 'sendMsgAlTabsAction'
+							// 	// });
+							// });	
+						}
 
-						    	}else{
-						    		console.log('Report for linkedin url not generated....');
-
-						    		$.get(chrome.extension.getURL('/html/user_info_not_found.html'), function(data) {
-						    			$('#initial-state').html('');
-										$('#login-box').html('');
-										$('#social-data').html(data);
-										$('#usr_nof_nm_hl').text($('.pv-top-card-section__name').text());
-						    		});
-						    	}
-
-						    	if ($('.credit-button').length > 0){
-						    		$('#usr_crd_sh_st').text(rem_crd);
-						    		$('.credit-button').fadeIn();
-						    	}
-							}
-						});
-
-				        //save the data in chrome local storage
-						// var stdata = {apiak: $.trim(apiak.val()), user_info: {user_credits: 13}};
-						// chrome.storage.local.set({ktcapiak: stdata}, function() {
-						// 	checkLogin();
-
-						// 	//send message to all tabs to update
-						// 	//popup in all tabs
-						// 	// chrome.runtime.sendMessage({
-						// 	//     from:    'app',
-						// 	//     subject: 'sendMsgAlTabsAction'
-						// 	// });
-						// });
 					});
 		    	}
 		    }
