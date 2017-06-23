@@ -270,7 +270,7 @@ $(document).on('click', '#s_a_k_btn', function(event){
 	// 	// 	//     subject: 'sendMsgAlTabsAction'
 	// 	// 	// });
 	// 	// });
-	// });	
+	// });
 });
 
 //Click on the button to handle data retrieval from KTC
@@ -309,7 +309,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    		//var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
 		    		//var ktc_url = chrome.runtime.getURL('sample.json');
 		    		var ktc_url = 'https://shopify.shoptradeonline.com/shoptradeapp/chrome/call_api?apikey='+apiak+'&lnkurl='+lnkdinurl;
-
+		    		
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
 						url: ktc_url,
@@ -637,6 +637,49 @@ $(document).on('click', '.soc-rd-url-btn', function(event){
 		window.open(url, '_blank');
 		console.log('Redirect url: ', url);
 	}
+});
+
+$(document).on('click', '.up-apiky', function(event){
+	event.preventDefault();
+	console.log('Update access key');
+	loaderShow();
+	$.get(chrome.extension.getURL('/html/update_api_key.html'), function(data) {
+		$('#initial-state').html(data);
+		var logo_icon = chrome.extension.getURL('/img/logo.png');
+		$('img.login-box-logo').attr('src', logo_icon);
+		loaderHide();
+	});
+});
+
+$(document).on('click', '.bk-rtsc', function(event){
+	event.preventDefault();
+	console.log('Back to retrieve contact');
+	checkLogin();
+});
+
+$(document).on('click', '#u_a_k_btn', function(event){
+	event.preventDefault();
+
+	var flag = 0;
+	var apiak = $('#api_access_key');
+
+	//console.log(checkString($.trim(apiak.val())));
+	if ($.trim(apiak.val()) === '' || checkString($.trim(apiak.val())) === false){
+		console.log('Data has error');
+		$('#apiak_msg').text('Improper input value');
+		return false;
+	}else{
+		$('#apiak_msg').text('');
+		console.log('Data has no error', $('#api_access_key').val());
+	}
+
+	//save the data in chrome local storage
+	var stdata = {apiak: $.trim(apiak.val()), user_info: {}};
+	chrome.storage.local.set({ktcapiak: stdata}, function() {
+		$('#api_access_key').val('');
+		$('#apiak_msg').text('API key updated').css('color', '#006c87');
+		console.log('Update the api key in local storage');
+	});
 });
 
 var checkString = function(data) {
