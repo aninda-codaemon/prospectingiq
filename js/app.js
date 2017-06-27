@@ -644,6 +644,8 @@ $(document).on('click', '.up-apiky', function(event){
 	console.log('Update access key');
 	loaderShow();
 	$.get(chrome.extension.getURL('/html/update_api_key.html'), function(data) {
+		$('div.credit-button').removeClass('credit-button-pink').hide();		
+		$('#credit-limit').html('');
 		$('#initial-state').html(data);
 		var logo_icon = chrome.extension.getURL('/img/logo.png');
 		$('img.login-box-logo').attr('src', logo_icon);
@@ -654,6 +656,8 @@ $(document).on('click', '.up-apiky', function(event){
 $(document).on('click', '.bk-rtsc', function(event){
 	event.preventDefault();
 	console.log('Back to retrieve contact');
+	$('div.credit-button').removeClass('credit-button-pink');
+	$('div.credit-button').hide();
 	checkLogin();
 });
 
@@ -677,8 +681,9 @@ $(document).on('click', '#u_a_k_btn', function(event){
 	var stdata = {apiak: $.trim(apiak.val()), user_info: {}};
 	chrome.storage.local.set({ktcapiak: stdata}, function() {
 		$('#api_access_key').val('');
-		$('#apiak_msg').text('API key updated').css('color', '#006c87');
+		$('#apiak_msg').text('API key updated').css('color', '#006c87').css('font-size', '11');
 		console.log('Update the api key in local storage');
+		//checkLogin();
 	});
 });
 
