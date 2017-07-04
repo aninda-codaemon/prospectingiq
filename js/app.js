@@ -308,7 +308,8 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 		    		//KTC API URL
 		    		//var ktc_url = 'https://api.knowthycustomer.com/v1/linkedin_lookup?api_key='+apiak+'&social_url='+lnkdinurl;
 		    		//var ktc_url = chrome.runtime.getURL('sample.json');
-		    		var ktc_url = 'https://shopify.shoptradeonline.com/shoptradeapp/chrome/call_api?apikey='+apiak+'&lnkurl='+lnkdinurl;
+		    		//var ktc_url = 'https://shopify.shoptradeonline.com/shoptradeapp/chrome/call_api?apikey='+apiak+'&lnkurl='+lnkdinurl;
+		    		var ktc_url = 'https://prospectingiq.knowthycustomer.com/chrome/call_api?apikey='+apiak+'&lnkurl='+lnkdinurl;
 		    		
 		    		//call ajax with the url to fetch the user report
 		    		$.ajax({
