@@ -77,7 +77,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			}
 			
 			//initiate the popup modal div
-			initpop();			
+			initpop();
 		}else if (request.subject === "updateAvailableCredits"){
 			console.log('Received message from background', request);
 		}
