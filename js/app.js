@@ -325,7 +325,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 						cache: false*/
 						error: function(jqXHR, textStatus, errorThrown){
 							console.log('Ajax error', errorThrown);
-							console.log('Ajax jqXHR', jqXHR.responseJSON.message);
+							//console.log('Ajax jqXHR', jqXHR.responseJSON.message);
 							console.log('Ajax jqXHR', jqXHR);
 							console.log('Ajax text status', textStatus);
 
