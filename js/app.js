@@ -395,6 +395,8 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									var mob_icn = chrome.extension.getURL('img/icons/mobile_icon.png');
 									var shar_icn = chrome.extension.getURL('img/icons/share_icon.png');
 									
+									$('.eml_pho_shwall').hide();
+
 									if (json_resp.body.entities.people.length > 0){
 										$('#initial-state').html('');
 										$('#login-box').html('');
@@ -422,12 +424,15 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									    		$('#soc_eml_hl_all').append(allle);
 									    	});
 
-									    	if (soc_email.length == 1){
-									    		$('#soc_eml_more').trigger('click');	
-									    	}
+									    	// if (soc_email.length == 1){
+									    	// 	$('#soc_eml_more').trigger('click');
+									    	// }
+									    	$('#soc_eml_more').trigger('click');
 									    }else{
 									    	$('#soc_eml_more').trigger('click');
+									    	$('#soc_eml_hl_all').append('<p class="margin-0 soc-eml-pri info-text">No email addresses found</p>');
 									    }
+
 
 								    	//console.log('Phone Nos.', json_resp.entities.people[0].contact.phones.length);
 								    	var soc_phones = json_resp.body.entities.people[0].contact.phones;
@@ -446,11 +451,13 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 									    		$('#soc_pho_hl_all').append(allle);
 									    	});
 
-									    	if (soc_phones.length == 1){
-									    		$('#soc_pho_more').trigger('click');	
-									    	}
+									    	// if (soc_phones.length == 1){
+									    	// 	$('#soc_pho_more').trigger('click');	
+									    	// }
+									    	$('#soc_pho_more').trigger('click');
 								    	}else{
 								    		$('#soc_pho_more').trigger('click');
+								    		$('#soc_pho_hl_all').append('<p class="margin-0 soc-pho-pri info-text">No phone numbers found</p>');
 								    	}
 
 								    	//get all the social profiles
@@ -468,12 +475,13 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							    	}else{
 							    		console.log('Report for linkedin url not generated....');
 
+							    		var serc_icn = chrome.extension.getURL('img/search_icon.png');
 							    		$.get(chrome.extension.getURL('/html/user_info_not_found.html'), function(data) {
 							    			$('#initial-state').html('');
 											$('#login-box').html('');
 											$('#social-data').html(data);
 											$('#usr_nof_nm_hl').text($('.pv-top-card-section__name').text());
-											
+											$('img.not-found-icn').attr('src', serc_icn);
 							    		});
 							    	}
 
@@ -497,7 +505,7 @@ $(document).on('click', '#ret_cnt_inf_btn', function(event){
 							// 	//     from:    'app',
 							// 	//     subject: 'sendMsgAlTabsAction'
 							// 	// });
-							// });	
+							// });
 						}
 
 					});
@@ -521,6 +529,8 @@ var appendSocialBlock = function(prfdata){
 	var am_icn = chrome.extension.getURL('img/icons/amazon_icon.png');
 	var fl_icn = chrome.extension.getURL('img/icons/flickr_icon.png');
 	var in_icn = chrome.extension.getURL('img/icons/instagram_icon.png');
+
+	console.log(prfdata);
 
 	if (prfdata.site !== null){
 		$.get(chrome.extension.getURL('/html/social_url_blocks.html'), function(data) {		
@@ -589,6 +599,17 @@ var appendSocialBlock = function(prfdata){
 				//find image for klout.com
 				
 			}			
+		});
+	}else{
+		console.log('Null URL:', prfdata.url);
+
+		$.get(chrome.extension.getURL('/html/social_url_noname_blocks.html'), function(data) {
+			$('#soc_url_ln_hl').append(data);
+			var sh_icn = chrome.extension.getURL('img/next-icon.png');
+			$('img.soc-ln-url-img').last().attr('src', sh_icn);
+			$('.soc-ln-nm-link').last().text(text_truncate(prfdata.url, 35));
+			$('.soc-ln-nm-link').last().attr('href', prfdata.url);
+			$('.soc-ln-link-btn').last().attr('data-href', prfdata.url);
 		});
 	}
 };
@@ -712,3 +733,17 @@ var usphone = function (phone) {
 var capitalizeFirstLetter = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+text_truncate = function(str, length, ending) {
+    if (length == null) {
+      	length = 100;
+    }
+    if (ending == null) {
+      	ending = '...';
+    }
+    if (str.length > length) {
+      	return str.substring(0, length - ending.length) + ending;
+    } else {
+      	return str;
+    }
+  };
